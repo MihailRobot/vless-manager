@@ -63,14 +63,14 @@ tar -xzf "${ARCHIVE_PATH}" -C "${TMP_DIR}"
 EXTRACTED_DIR="$(find "${TMP_DIR}" -maxdepth 1 -mindepth 1 -type d | head -n 1)"
 
 [[ -z "${EXTRACTED_DIR}" ]] && error "Could not find extracted directory inside archive."
-[[ ! -f "${EXTRACTED_DIR}/install.sh" ]] && error "install.sh not found inside archive. Check your tar structure."
+[[ ! -f "${EXTRACTED_DIR}/installer.sh" ]] && error "installer.sh not found inside archive. Check your tar structure."
 
 success "Extracted to ${EXTRACTED_DIR}"
 
 # ── Run installer ──────────────────────────────────────────────────────────────
-chmod +x "${EXTRACTED_DIR}/install.sh"
-info "Running install.sh..."
+chmod +x "${EXTRACTED_DIR}/installer.sh"
+info "Running installer.sh..."
 echo ""
 
 cd "${EXTRACTED_DIR}"
-bash install.sh
+bash installer.sh
