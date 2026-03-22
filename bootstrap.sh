@@ -3,10 +3,7 @@
 # Downloads the singbox-manager release tar from GitHub and runs the installer.
 #
 # Usage:
-#   curl -fsSL https://github.com/MihailRobot/vless-manager/raw/refs/heads/main/bootstrap.sh | sudo bash
-#
-# Or with a specific version:
-#   RELEASE_VERSION=1.0.0 bash bootstrap.sh
+#   curl -fsSL https://raw.githubusercontent.com/MihailRobot/vless-manager/main/bootstrap.sh | sudo bash
 
 set -euo pipefail
 
@@ -23,21 +20,14 @@ error()   { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 
 [[ ${EUID} -ne 0 ]] && error "Run as root: sudo bash $0"
 
-
-ARCHIVE_NAME="singbox-manager.tar.gz"   # the filename you uploaded to the release
-# ──────────────────────────────────────────────────────────────────────────────
+ARCHIVE_NAME="singbox-manager.tar.gz"
+DOWNLOAD_URL="https://github.com/MihailRobot/vless-manager/raw/refs/heads/main/singbox-manager.tar.gz"
 
 echo ""
 echo "  ┌──────────────────────────────────────────────┐"
 echo "  │        sing-box Manager Bootstrap            │"
 echo "  └──────────────────────────────────────────────┘"
 echo ""
-
-
-DOWNLOAD_URL="https://github.com/MihailRobot/vless-manager/raw/refs/heads/main/singbox-manager.tar.gz"
-
-
-info "Downloading from: ${DOWNLOAD_URL}"
 
 # ── Dependencies ───────────────────────────────────────────────────────────────
 if ! command -v curl >/dev/null 2>&1; then
@@ -49,28 +39,26 @@ fi
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "${TMP_DIR}"' EXIT
 
-ARCHIVE_PATH="${TMP_DIR}/${ARCHIVE_NAME}"
+EXTRACT_DIR="${TMP_DIR}/singbox-manager"
+mkdir -p "${EXTRACT_DIR}"
 
-curl -fSL "${DOWNLOAD_URL}" -o "${ARCHIVE_PATH}" || \
-    error "Download failed. Check your GITHUB_USER/GITHUB_REPO and that the release exists."
+info "Downloading from: ${DOWNLOAD_URL}"
+curl -fSL "${DOWNLOAD_URL}" -o "${TMP_DIR}/${ARCHIVE_NAME}" || \
+    error "Download failed. Make sure singbox-manager.tar.gz is committed to the main branch."
 
 success "Downloaded ${ARCHIVE_NAME}"
 
 info "Extracting archive..."
-tar -xzf "${ARCHIVE_PATH}" -C "${TMP_DIR}"
+tar -xzf "${TMP_DIR}/${ARCHIVE_NAME}" -C "${EXTRACT_DIR}"
 
-# Find the extracted directory (handles any top-level folder name inside the tar)
-EXTRACTED_DIR="$(find "${TMP_DIR}" -maxdepth 1 -mindepth 1 -type d | head -n 1)"
+[[ ! -f "${EXTRACT_DIR}/install.sh" ]] && error "install.sh not found inside archive."
 
-[[ -z "${EXTRACTED_DIR}" ]] && error "Could not find extracted directory inside archive."
-[[ ! -f "${EXTRACTED_DIR}/install.sh" ]] && error "install.sh not found inside archive. Check your tar structure."
-
-success "Extracted to ${EXTRACTED_DIR}"
+success "Extracted successfully"
 
 # ── Run installer ──────────────────────────────────────────────────────────────
-chmod +x "${EXTRACTED_DIR}/install.sh"
+chmod +x "${EXTRACT_DIR}/install.sh"
 info "Running install.sh..."
 echo ""
 
-cd "${EXTRACTED_DIR}"
+cd "${EXTRACT_DIR}"
 bash install.sh
