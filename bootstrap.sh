@@ -3,7 +3,7 @@
 # Downloads the singbox-manager release tar from GitHub and runs the installer.
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/vless-manager/main/bootstrap.sh | sudo bash
+#   curl -fsSL https://github.com/MihailRobot/vless-manager/raw/refs/heads/main/bootstrap.sh | sudo bash
 #
 # Or with a specific version:
 #   RELEASE_VERSION=1.0.0 bash bootstrap.sh
