@@ -23,14 +23,6 @@ error()   { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 
 [[ ${EUID} -ne 0 ]] && error "Run as root: sudo bash $0"
 
-# ── Configuration ──────────────────────────────────────────────────────────────
-# Edit these two variables to match your GitHub repo and release tag/archive name.
-GITHUB_USER="YOUR_GITHUB_USER"
-GITHUB_REPO="YOUR_GITHUB_REPO"
-
-# The release version to download. Can be overridden via env:
-#   RELEASE_VERSION=1.2.0 sudo bash bootstrap.sh
-RELEASE_VERSION="${RELEASE_VERSION:-latest}"
 
 ARCHIVE_NAME="singbox-manager.tar.gz"   # the filename you uploaded to the release
 # ──────────────────────────────────────────────────────────────────────────────
@@ -41,12 +33,9 @@ echo "  │        sing-box Manager Bootstrap            │"
 echo "  └──────────────────────────────────────────────┘"
 echo ""
 
-# ── Resolve download URL ───────────────────────────────────────────────────────
-if [[ "${RELEASE_VERSION}" == "latest" ]]; then
-    DOWNLOAD_URL="https://github.com/${GITHUB_USER}/${GITHUB_REPO}/releases/latest/download/${ARCHIVE_NAME}"
-else
-    DOWNLOAD_URL="https://github.com/${GITHUB_USER}/${GITHUB_REPO}/releases/download/v${RELEASE_VERSION}/${ARCHIVE_NAME}"
-fi
+
+DOWNLOAD_URL="https://github.com/MihailRobot/vless-manager/raw/refs/heads/main/singbox-manager.tar.gz"
+
 
 info "Downloading from: ${DOWNLOAD_URL}"
 
